@@ -403,7 +403,9 @@
         #cameraVideo {
             flex: 1;
             width: 100%;
+            height: 100%;
             object-fit: cover;
+            background: black;
         }
 
         .camera-controls {
@@ -834,17 +836,45 @@
             
             modal.classList.remove('hidden');
             
-            navigator.mediaDevices.getUserMedia({ 
-                video: { facingMode: 'environment' },
+            // Try different camera constraints
+            const constraints = {
+                video: { 
+                    facingMode: 'environment',
+                    width: { ideal: 1920 },
+                    height: { ideal: 1080 }
+                },
                 audio: false 
-            })
+            };
+            
+            navigator.mediaDevices.getUserMedia(constraints)
             .then(stream => {
                 cameraStream = stream;
                 video.srcObject = stream;
+                
+                // Ensure video plays
+                video.onloadedmetadata = () => {
+                    video.play().catch(err => {
+                        console.error('Error playing video:', err);
+                    });
+                };
             })
             .catch(err => {
-                alert('Could not access camera: ' + err.message);
-                closeCamera();
+                // If back camera fails, try front camera
+                navigator.mediaDevices.getUserMedia({ 
+                    video: { facingMode: 'user' },
+                    audio: false 
+                })
+                .then(stream => {
+                    cameraStream = stream;
+                    video.srcObject = stream;
+                    video.onloadedmetadata = () => {
+                        video.play();
+                    };
+                })
+                .catch(err2 => {
+                    alert('Could not access camera. Please check permissions in your browser settings.');
+                    closeCamera();
+                });
             });
         }
 
