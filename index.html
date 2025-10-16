@@ -5,6 +5,7 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
     <meta name="theme-color" content="#1a1a2e">
     <title>Flipster - Study Cards</title>
+    <script src='https://cdn.jsdelivr.net/npm/tesseract.js@5/dist/tesseract.min.js'></script>
     <link rel="manifest" href="data:application/json;base64,eyJuYW1lIjoiRmxpcHN0ZXIiLCJzaG9ydF9uYW1lIjoiRmxpcHN0ZXIiLCJzdGFydF91cmwiOiIvIiwiZGlzcGxheSI6InN0YW5kYWxvbmUiLCJiYWNrZ3JvdW5kX2NvbG9yIjoiIzFhMWEyZSIsInRoZW1lX2NvbG9yIjoiIzFhMWEyZSIsIm9yaWVudGF0aW9uIjoicG9ydHJhaXQiLCJpY29ucyI6W3sic3JjIjoiZGF0YTppbWFnZS9zdmcreG1sO2Jhc2U2NCxQSE4yWnlCM2FXUjBhRDBpTVRJNElpQm9aV2xuYUhROUlqRXlPQ0lnZG1sbGQwSnZlRDBpTUNBd0lERXlPQ0F4TWpnaUlHWnBiR3c5SW01dmJtVWlJSGh0Ykc1elBTSm9kSFJ3T2k4dmQzZDNMbmN6TG05eVp5OHlNREF3TDNOMlp5SStQSEpsWTNRZ2QybGtkR2c5SWpFeU9DSWdhR1ZwWjJoMFBTSXhNamdpSUhKNFBTSXhOaUlnWm1sc2JEMGlJekZoTVdFeVpTSXZQanh3WVhSb0lHUTlJazB6TWlBMk5FdzVOaUEyTkV3Mk5DQTVOa3d6TWlBMk5Gb2lJR1pwYkd3OUlpTTBNMkUxWm1ZaUx6NDhMMk4ySWo0PSIsInNpemVzIjoiMTI4eDEyOCIsInR5cGUiOiJpbWFnZS9zdmcreG1sIn1dfQ==">
     <style>
         * {
@@ -447,6 +448,10 @@
             content: '📚';
         }
 
+        .nav-btn:nth-child(4)::before {
+            content: '⚙️';
+        }
+
         .nav-label {
             font-size: 11px;
             font-weight: 700;
@@ -492,6 +497,133 @@
 
         .empty-state p {
             font-size: 16px;
+        }
+
+        /* AI Generation Styles */
+        .ai-section {
+            margin-top: 30px;
+            padding: 20px;
+            background: rgba(102, 126, 234, 0.1);
+            border-radius: 16px;
+            border: 2px solid rgba(102, 126, 234, 0.3);
+        }
+
+        .ai-section h3 {
+            margin-bottom: 12px;
+            font-size: 18px;
+        }
+
+        .ai-generate-btn {
+            width: 100%;
+            padding: 18px;
+            background: linear-gradient(135deg, #f093fb 0%, #f5576c 100%);
+            border: none;
+            border-radius: 16px;
+            color: white;
+            font-size: 16px;
+            font-weight: 700;
+            cursor: pointer;
+            margin-top: 12px;
+            box-shadow: 0 8px 24px rgba(240, 147, 251, 0.3);
+            transition: all 0.3s;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 10px;
+        }
+
+        .ai-generate-btn:disabled {
+            opacity: 0.5;
+            cursor: not-allowed;
+        }
+
+        .ai-generate-btn:active:not(:disabled) {
+            transform: scale(0.97);
+        }
+
+        .ai-generate-btn::before {
+            content: '✨';
+            font-size: 20px;
+        }
+
+        .loading-overlay {
+            position: fixed;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            background: rgba(26, 26, 46, 0.95);
+            backdrop-filter: blur(10px);
+            z-index: 2000;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            gap: 20px;
+        }
+
+        .loading-spinner {
+            width: 60px;
+            height: 60px;
+            border: 4px solid rgba(255, 255, 255, 0.1);
+            border-top-color: #667eea;
+            border-radius: 50%;
+            animation: spin 1s linear infinite;
+        }
+
+        @keyframes spin {
+            to { transform: rotate(360deg); }
+        }
+
+        .loading-text {
+            font-size: 18px;
+            font-weight: 600;
+            text-align: center;
+            padding: 0 40px;
+        }
+
+        .settings-link {
+            color: #667eea;
+            text-decoration: none;
+            font-weight: 600;
+            font-size: 14px;
+            display: inline-block;
+            margin-top: 8px;
+        }
+
+        .api-key-input {
+            width: 100%;
+            padding: 16px;
+            background: rgba(255, 255, 255, 0.1);
+            border: 1px solid rgba(255, 255, 255, 0.2);
+            border-radius: 12px;
+            color: white;
+            font-size: 14px;
+            font-family: monospace;
+            margin-top: 8px;
+        }
+
+        .settings-view {
+            padding: 20px;
+        }
+
+        .settings-section {
+            background: rgba(255, 255, 255, 0.05);
+            border-radius: 16px;
+            padding: 20px;
+            margin-bottom: 20px;
+        }
+
+        .settings-section h3 {
+            margin-bottom: 12px;
+            font-size: 16px;
+        }
+
+        .settings-section p {
+            font-size: 14px;
+            opacity: 0.7;
+            line-height: 1.6;
+            margin-bottom: 12px;
         }
     </style>
 </head>
@@ -546,7 +678,22 @@
                         <input type="text" id="deckName" placeholder="e.g., Spanish Vocabulary">
                     </div>
 
-                    <h3 style="margin: 30px 0 16px;">Add Card</h3>
+                    <!-- AI Generation Section -->
+                    <div class="ai-section">
+                        <h3>✨ AI Card Generation</h3>
+                        <p style="font-size: 14px; opacity: 0.8; margin-bottom: 12px;">
+                            Take a photo of your textbook and let AI create flashcards for you!
+                        </p>
+                        <input type="file" id="aiPhotoInput" accept="image/*" capture="environment" style="display:none;" onchange="handleAIPhoto()">
+                        <button class="ai-generate-btn" onclick="document.getElementById('aiPhotoInput').click()">
+                            Generate Cards from Photo
+                        </button>
+                        <a href="#" class="settings-link" onclick="showView('settings'); return false;">
+                            Configure OpenAI API Key →
+                        </a>
+                    </div>
+
+                    <h3 style="margin: 30px 0 16px;">Or Add Manually</h3>
                     
                     <div class="form-group">
                         <label>Front (Question)</label>
@@ -575,6 +722,32 @@
                     <button class="btn-primary" onclick="saveDeck()">Save Deck</button>
                 </div>
             </div>
+
+            <!-- Settings View -->
+            <div id="settingsView" class="hidden">
+                <div class="settings-view">
+                    <h2 style="margin-bottom: 24px;">⚙️ Settings</h2>
+                    
+                    <div class="settings-section">
+                        <h3>OpenAI API Key</h3>
+                        <p>To use AI card generation, you need an OpenAI API key. Get one for free at <a href="https://platform.openai.com/api-keys" target="_blank" style="color: #667eea;">platform.openai.com</a></p>
+                        <input type="password" 
+                               class="api-key-input" 
+                               id="apiKeyInput" 
+                               placeholder="sk-proj-...">
+                        <button class="btn-primary" onclick="saveApiKey()">Save API Key</button>
+                    </div>
+
+                    <div class="settings-section">
+                        <h3>How it works</h3>
+                        <p>1. Get your free API key from OpenAI<br>
+                        2. Paste it above and save<br>
+                        3. Take photos of textbook pages<br>
+                        4. AI automatically creates flashcards!<br><br>
+                        Your API key is stored locally on your device and never shared.</p>
+                    </div>
+                </div>
+            </div>
         </div>
 
         <div class="bottom-nav">
@@ -587,7 +760,16 @@
             <button class="nav-btn" onclick="showView('study')">
                 <span class="nav-label">Study</span>
             </button>
+            <button class="nav-btn" onclick="showView('settings')">
+                <span class="nav-label">Settings</span>
+            </button>
         </div>
+    </div>
+
+    <!-- Loading Overlay -->
+    <div id="loadingOverlay" class="loading-overlay hidden">
+        <div class="loading-spinner"></div>
+        <div class="loading-text" id="loadingText">Processing image...</div>
     </div>
 
 
@@ -697,6 +879,10 @@
             } else if (view === 'edit') {
                 document.getElementById('editView').classList.remove('hidden');
                 document.querySelectorAll('.nav-btn')[1].classList.add('active');
+            } else if (view === 'settings') {
+                document.getElementById('settingsView').classList.remove('hidden');
+                document.querySelectorAll('.nav-btn')[3].classList.add('active');
+                loadApiKey();
             }
         }
 
@@ -881,6 +1067,148 @@
                 };
                 reader.readAsDataURL(file);
             }
+        }
+
+        // API Key Management
+        function saveApiKey() {
+            const apiKey = document.getElementById('apiKeyInput').value.trim();
+            if (!apiKey) {
+                alert('Please enter your OpenAI API key');
+                return;
+            }
+            if (!apiKey.startsWith('sk-')) {
+                alert('Invalid API key format. OpenAI keys start with "sk-"');
+                return;
+            }
+            localStorage.setItem('openai_api_key', apiKey);
+            alert('API key saved successfully! 🎉');
+        }
+
+        function loadApiKey() {
+            const apiKey = localStorage.getItem('openai_api_key');
+            if (apiKey) {
+                document.getElementById('apiKeyInput').value = apiKey;
+            }
+        }
+
+        function getApiKey() {
+            return localStorage.getItem('openai_api_key');
+        }
+
+        // AI Card Generation
+        async function handleAIPhoto() {
+            const fileInput = document.getElementById('aiPhotoInput');
+            const file = fileInput.files[0];
+            
+            if (!file) return;
+
+            const apiKey = getApiKey();
+            if (!apiKey) {
+                alert('Please configure your OpenAI API key in Settings first!');
+                showView('settings');
+                return;
+            }
+
+            showLoading('Extracting text from image...');
+
+            try {
+                // Step 1: OCR with Tesseract
+                const { data: { text } } = await Tesseract.recognize(file, 'eng', {
+                    logger: m => {
+                        if (m.status === 'recognizing text') {
+                            updateLoadingText(`Reading text... ${Math.round(m.progress * 100)}%`);
+                        }
+                    }
+                });
+
+                if (!text || text.trim().length < 20) {
+                    hideLoading();
+                    alert('Could not extract enough text from the image. Please try a clearer photo.');
+                    return;
+                }
+
+                // Step 2: Generate flashcards with OpenAI
+                updateLoadingText('AI is creating flashcards...');
+                const cards = await generateCardsWithAI(text, apiKey);
+
+                hideLoading();
+
+                if (cards && cards.length > 0) {
+                    // Add generated cards to tempCards
+                    cards.forEach(card => {
+                        tempCards.push({
+                            front: card.front,
+                            back: card.back,
+                            frontImage: null,
+                            backImage: null
+                        });
+                    });
+                    
+                    renderTempCards();
+                    alert(`✨ Generated ${cards.length} flashcards! Review and save your deck.`);
+                } else {
+                    alert('Could not generate cards. Please try again.');
+                }
+
+            } catch (error) {
+                hideLoading();
+                console.error('AI generation error:', error);
+                alert('Error: ' + error.message);
+            }
+
+            // Reset file input
+            fileInput.value = '';
+        }
+
+        async function generateCardsWithAI(text, apiKey) {
+            const response = await fetch('https://api.openai.com/v1/chat/completions', {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json',
+                    'Authorization': `Bearer ${apiKey}`
+                },
+                body: JSON.stringify({
+                    model: 'gpt-3.5-turbo',
+                    messages: [{
+                        role: 'system',
+                        content: 'You are a helpful study assistant that creates flashcards from educational content. Generate 5-8 high-quality question-answer flashcards. Return ONLY valid JSON array format: [{"front": "question", "back": "answer"}]. Keep questions clear and concise. Answers should be comprehensive but not too long.'
+                    }, {
+                        role: 'user',
+                        content: `Create flashcards from this text:\n\n${text}`
+                    }],
+                    temperature: 0.7,
+                    max_tokens: 1000
+                })
+            });
+
+            if (!response.ok) {
+                const error = await response.json();
+                throw new Error(error.error?.message || 'OpenAI API error');
+            }
+
+            const data = await response.json();
+            const content = data.choices[0].message.content;
+            
+            // Parse JSON response
+            const jsonMatch = content.match(/\[[\s\S]*\]/);
+            if (jsonMatch) {
+                return JSON.parse(jsonMatch[0]);
+            }
+            
+            throw new Error('Could not parse AI response');
+        }
+
+        function showLoading(text) {
+            document.getElementById('loadingText').textContent = text;
+            document.getElementById('loadingOverlay').classList.remove('hidden');
+        }
+
+        function hideLoading() {
+            document.getElementById('loadingOverlay').classList.add('hidden');
+        }
+
+        function updateLoadingText(text) {
+            document.getElementById('loadingText').textContent = text;
         }
 
         // Touch gestures for swiping
