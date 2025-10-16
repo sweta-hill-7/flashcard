@@ -1,0 +1,909 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+    <meta name="theme-color" content="#1a1a2e">
+    <title>Flipster - Study Cards</title>
+    <link rel="manifest" href="data:application/json;base64,eyJuYW1lIjoiRmxpcHN0ZXIiLCJzaG9ydF9uYW1lIjoiRmxpcHN0ZXIiLCJzdGFydF91cmwiOiIvIiwiZGlzcGxheSI6InN0YW5kYWxvbmUiLCJiYWNrZ3JvdW5kX2NvbG9yIjoiIzFhMWEyZSIsInRoZW1lX2NvbG9yIjoiIzFhMWEyZSIsIm9yaWVudGF0aW9uIjoicG9ydHJhaXQiLCJpY29ucyI6W3sic3JjIjoiZGF0YTppbWFnZS9zdmcreG1sO2Jhc2U2NCxQSE4yWnlCM2FXUjBhRDBpTVRJNElpQm9aV2xuYUhROUlqRXlPQ0lnZG1sbGQwSnZlRDBpTUNBd0lERXlPQ0F4TWpnaUlHWnBiR3c5SW01dmJtVWlJSGh0Ykc1elBTSm9kSFJ3T2k4dmQzZDNMbmN6TG05eVp5OHlNREF3TDNOMlp5SStQSEpsWTNRZ2QybGtkR2c5SWpFeU9DSWdhR1ZwWjJoMFBTSXhNamdpSUhKNFBTSXhOaUlnWm1sc2JEMGlJekZoTVdFeVpTSXZQanh3WVhSb0lHUTlJazB6TWlBMk5FdzVOaUEyTkV3Mk5DQTVOa3d6TWlBMk5Gb2lJR1pwYkd3OUlpTTBNMkUxWm1ZaUx6NDhMMk4ySWo0PSIsInNpemVzIjoiMTI4eDEyOCIsInR5cGUiOiJpbWFnZS9zdmcreG1sIn1dfQ==">
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+            -webkit-tap-highlight-color: transparent;
+        }
+
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+            background: #1a1a2e;
+            color: white;
+            overflow-x: hidden;
+            height: 100vh;
+            position: fixed;
+            width: 100%;
+        }
+
+        #app {
+            height: 100vh;
+            display: flex;
+            flex-direction: column;
+        }
+
+        /* Header */
+        .header {
+            padding: 16px 20px;
+            background: rgba(26, 26, 46, 0.95);
+            backdrop-filter: blur(10px);
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            border-bottom: 1px solid rgba(255, 255, 255, 0.1);
+        }
+
+        .logo {
+            font-size: 24px;
+            font-weight: 800;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
+        }
+
+        .streak {
+            display: flex;
+            align-items: center;
+            gap: 6px;
+            font-size: 16px;
+            font-weight: 600;
+        }
+
+        /* Main Content */
+        .content {
+            flex: 1;
+            overflow-y: auto;
+            overflow-x: hidden;
+            -webkit-overflow-scrolling: touch;
+            padding-bottom: 80px;
+        }
+
+        /* Deck Grid */
+        .deck-grid {
+            display: grid;
+            grid-template-columns: repeat(2, 1fr);
+            gap: 16px;
+            padding: 20px;
+        }
+
+        .deck-card {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            border-radius: 20px;
+            padding: 20px;
+            aspect-ratio: 1;
+            display: flex;
+            flex-direction: column;
+            justify-content: space-between;
+            cursor: pointer;
+            transition: transform 0.2s;
+            position: relative;
+            overflow: hidden;
+        }
+
+        .deck-card:active {
+            transform: scale(0.95);
+        }
+
+        .deck-card::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            background: rgba(255, 255, 255, 0.1);
+            opacity: 0;
+            transition: opacity 0.2s;
+        }
+
+        .deck-card:active::before {
+            opacity: 1;
+        }
+
+        .deck-title {
+            font-size: 18px;
+            font-weight: 700;
+            margin-bottom: 8px;
+        }
+
+        .deck-count {
+            font-size: 14px;
+            opacity: 0.9;
+        }
+
+        .add-deck {
+            background: rgba(255, 255, 255, 0.1);
+            border: 2px dashed rgba(255, 255, 255, 0.3);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 48px;
+            color: rgba(255, 255, 255, 0.6);
+        }
+
+        /* Study View */
+        .study-view {
+            height: 100%;
+            display: flex;
+            flex-direction: column;
+            padding: 20px;
+        }
+
+        .card-counter {
+            text-align: center;
+            font-size: 14px;
+            opacity: 0.7;
+            margin-bottom: 20px;
+        }
+
+        .card-container {
+            flex: 1;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            perspective: 1000px;
+            touch-action: pan-y;
+        }
+
+        .flashcard {
+            width: 100%;
+            max-width: 400px;
+            aspect-ratio: 3/4;
+            position: relative;
+            transform-style: preserve-3d;
+            transition: transform 0.6s;
+            cursor: pointer;
+        }
+
+        .flashcard.flipped {
+            transform: rotateY(180deg);
+        }
+
+        .card-face {
+            position: absolute;
+            width: 100%;
+            height: 100%;
+            backface-visibility: hidden;
+            border-radius: 24px;
+            padding: 30px;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            text-align: center;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            box-shadow: 0 20px 60px rgba(0, 0, 0, 0.3);
+        }
+
+        .card-back {
+            transform: rotateY(180deg);
+            background: linear-gradient(135deg, #f093fb 0%, #f5576c 100%);
+        }
+
+        .card-image {
+            max-width: 100%;
+            max-height: 60%;
+            object-fit: contain;
+            border-radius: 12px;
+            margin-bottom: 20px;
+        }
+
+        .card-text {
+            font-size: 24px;
+            font-weight: 600;
+            word-wrap: break-word;
+        }
+
+        .swipe-hint {
+            text-align: center;
+            margin-top: 20px;
+            font-size: 14px;
+            opacity: 0.6;
+        }
+
+        .study-actions {
+            display: flex;
+            gap: 12px;
+            margin-top: 20px;
+        }
+
+        .study-btn {
+            flex: 1;
+            padding: 16px;
+            border: none;
+            border-radius: 16px;
+            font-size: 16px;
+            font-weight: 600;
+            cursor: pointer;
+            transition: transform 0.2s;
+        }
+
+        .study-btn:active {
+            transform: scale(0.95);
+        }
+
+        .btn-prev {
+            background: rgba(255, 255, 255, 0.1);
+            color: white;
+        }
+
+        .btn-next {
+            background: white;
+            color: #1a1a2e;
+        }
+
+        /* Create/Edit View */
+        .edit-view {
+            padding: 20px;
+            overflow-y: auto;
+        }
+
+        .form-group {
+            margin-bottom: 20px;
+        }
+
+        label {
+            display: block;
+            font-size: 14px;
+            font-weight: 600;
+            margin-bottom: 8px;
+            opacity: 0.8;
+        }
+
+        input, textarea {
+            width: 100%;
+            padding: 16px;
+            background: rgba(255, 255, 255, 0.1);
+            border: 1px solid rgba(255, 255, 255, 0.2);
+            border-radius: 12px;
+            color: white;
+            font-size: 16px;
+            font-family: inherit;
+        }
+
+        textarea {
+            min-height: 100px;
+            resize: vertical;
+        }
+
+        input::placeholder, textarea::placeholder {
+            color: rgba(255, 255, 255, 0.5);
+        }
+
+        .camera-btn {
+            width: 100%;
+            padding: 16px;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            border: none;
+            border-radius: 12px;
+            color: white;
+            font-size: 16px;
+            font-weight: 600;
+            cursor: pointer;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 8px;
+            margin-top: 8px;
+        }
+
+        .image-preview {
+            width: 100%;
+            max-height: 200px;
+            object-fit: cover;
+            border-radius: 12px;
+            margin-top: 12px;
+        }
+
+        .card-list {
+            margin-top: 30px;
+        }
+
+        .card-item {
+            background: rgba(255, 255, 255, 0.1);
+            border-radius: 12px;
+            padding: 16px;
+            margin-bottom: 12px;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+
+        .card-item-text {
+            flex: 1;
+            font-size: 14px;
+        }
+
+        .delete-btn {
+            background: rgba(245, 87, 108, 0.2);
+            border: none;
+            color: #f5576c;
+            padding: 8px 16px;
+            border-radius: 8px;
+            cursor: pointer;
+            font-weight: 600;
+        }
+
+        /* Bottom Navigation */
+        .bottom-nav {
+            position: fixed;
+            bottom: 0;
+            left: 0;
+            right: 0;
+            background: rgba(26, 26, 46, 0.95);
+            backdrop-filter: blur(10px);
+            border-top: 1px solid rgba(255, 255, 255, 0.1);
+            display: flex;
+            padding: 12px 20px 24px;
+            justify-content: space-around;
+        }
+
+        .nav-btn {
+            background: none;
+            border: none;
+            color: rgba(255, 255, 255, 0.6);
+            font-size: 24px;
+            padding: 8px 20px;
+            cursor: pointer;
+            transition: all 0.2s;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            gap: 4px;
+        }
+
+        .nav-btn.active {
+            color: #667eea;
+        }
+
+        .nav-label {
+            font-size: 11px;
+            font-weight: 600;
+        }
+
+        .btn-primary {
+            width: 100%;
+            padding: 16px;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            border: none;
+            border-radius: 12px;
+            color: white;
+            font-size: 16px;
+            font-weight: 600;
+            cursor: pointer;
+            margin-top: 20px;
+        }
+
+        .hidden {
+            display: none;
+        }
+
+        /* Camera Modal */
+        .camera-modal {
+            position: fixed;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            background: black;
+            z-index: 1000;
+            display: flex;
+            flex-direction: column;
+        }
+
+        #cameraVideo {
+            flex: 1;
+            width: 100%;
+            object-fit: cover;
+        }
+
+        .camera-controls {
+            padding: 20px;
+            display: flex;
+            justify-content: space-around;
+            align-items: center;
+        }
+
+        .capture-btn {
+            width: 70px;
+            height: 70px;
+            border-radius: 50%;
+            border: 4px solid white;
+            background: rgba(255, 255, 255, 0.3);
+            cursor: pointer;
+        }
+
+        .close-camera {
+            background: rgba(255, 255, 255, 0.2);
+            border: none;
+            color: white;
+            padding: 12px 24px;
+            border-radius: 20px;
+            font-size: 16px;
+            cursor: pointer;
+        }
+
+        #cameraCanvas {
+            display: none;
+        }
+
+        .empty-state {
+            text-align: center;
+            padding: 60px 20px;
+            opacity: 0.6;
+        }
+
+        .empty-state h2 {
+            font-size: 24px;
+            margin-bottom: 12px;
+        }
+
+        .empty-state p {
+            font-size: 16px;
+        }
+    </style>
+</head>
+<body>
+    <div id="app">
+        <div class="header">
+            <div class="logo">Flipster</div>
+            <div class="streak">🔥 <span id="streakCount">0</span></div>
+        </div>
+
+        <div class="content">
+            <!-- Home View -->
+            <div id="homeView">
+                <div class="deck-grid" id="deckGrid">
+                    <div class="deck-card add-deck" onclick="showCreateDeck()">+</div>
+                </div>
+            </div>
+
+            <!-- Study View -->
+            <div id="studyView" class="hidden">
+                <div class="study-view">
+                    <div class="card-counter">
+                        <span id="currentCard">1</span> / <span id="totalCards">0</span>
+                    </div>
+                    <div class="card-container">
+                        <div class="flashcard" id="flashcard" onclick="flipCard()">
+                            <div class="card-face">
+                                <img id="frontImage" class="card-image hidden" src="">
+                                <div class="card-text" id="frontText">Tap to start</div>
+                            </div>
+                            <div class="card-face card-back">
+                                <img id="backImage" class="card-image hidden" src="">
+                                <div class="card-text" id="backText">Answer</div>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="swipe-hint">Swipe or use buttons to navigate</div>
+                    <div class="study-actions">
+                        <button class="study-btn btn-prev" onclick="prevCard()">← Prev</button>
+                        <button class="study-btn btn-next" onclick="nextCard()">Next →</button>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Create/Edit Deck View -->
+            <div id="editView" class="hidden">
+                <div class="edit-view">
+                    <div class="form-group">
+                        <label>Deck Name</label>
+                        <input type="text" id="deckName" placeholder="e.g., Spanish Vocabulary">
+                    </div>
+
+                    <h3 style="margin: 30px 0 16px;">Add Card</h3>
+                    
+                    <div class="form-group">
+                        <label>Front (Question)</label>
+                        <textarea id="cardFront" placeholder="What's the question?"></textarea>
+                        <button class="camera-btn" onclick="openCamera('front')">
+                            📸 Add Photo
+                        </button>
+                        <img id="frontImagePreview" class="image-preview hidden" src="">
+                    </div>
+
+                    <div class="form-group">
+                        <label>Back (Answer)</label>
+                        <textarea id="cardBack" placeholder="What's the answer?"></textarea>
+                        <button class="camera-btn" onclick="openCamera('back')">
+                            📸 Add Photo
+                        </button>
+                        <img id="backImagePreview" class="image-preview hidden" src="">
+                    </div>
+
+                    <button class="btn-primary" onclick="addCard()">Add Card</button>
+
+                    <div class="card-list" id="cardList"></div>
+
+                    <button class="btn-primary" onclick="saveDeck()">Save Deck</button>
+                </div>
+            </div>
+        </div>
+
+        <div class="bottom-nav">
+            <button class="nav-btn active" onclick="showView('home')">
+                <span>🏠</span>
+                <span class="nav-label">Home</span>
+            </button>
+            <button class="nav-btn" onclick="showCreateDeck()">
+                <span>➕</span>
+                <span class="nav-label">Create</span>
+            </button>
+            <button class="nav-btn" onclick="showView('study')">
+                <span>📚</span>
+                <span class="nav-label">Study</span>
+            </button>
+        </div>
+    </div>
+
+    <!-- Camera Modal -->
+    <div id="cameraModal" class="camera-modal hidden">
+        <video id="cameraVideo" autoplay playsinline></video>
+        <canvas id="cameraCanvas"></canvas>
+        <div class="camera-controls">
+            <button class="close-camera" onclick="closeCamera()">Cancel</button>
+            <button class="capture-btn" onclick="capturePhoto()"></button>
+            <div style="width: 80px;"></div>
+        </div>
+    </div>
+
+    <script>
+        let decks = [];
+        let currentDeck = null;
+        let currentCardIndex = 0;
+        let editingDeckId = null;
+        let tempCards = [];
+        let cameraStream = null;
+        let currentPhotoTarget = null;
+        let tempFrontImage = null;
+        let tempBackImage = null;
+        let touchStartX = 0;
+        let touchEndX = 0;
+
+        // Load data from memory
+        function loadData() {
+            const saved = localStorage.getItem('flipsterData');
+            if (saved) {
+                const data = JSON.parse(saved);
+                decks = data.decks || [];
+            }
+            updateStreak();
+            renderDecks();
+        }
+
+        // Save data to memory
+        function saveData() {
+            localStorage.setItem('flipsterData', JSON.stringify({ decks }));
+        }
+
+        // Update streak
+        function updateStreak() {
+            const today = new Date().toDateString();
+            const lastStudy = localStorage.getItem('lastStudyDate');
+            let streak = parseInt(localStorage.getItem('studyStreak') || '0');
+            
+            if (lastStudy !== today) {
+                const yesterday = new Date();
+                yesterday.setDate(yesterday.getDate() - 1);
+                if (lastStudy === yesterday.toDateString()) {
+                    streak++;
+                } else if (lastStudy !== today) {
+                    streak = 0;
+                }
+            }
+            
+            document.getElementById('streakCount').textContent = streak;
+        }
+
+        function incrementStreak() {
+            const today = new Date().toDateString();
+            const lastStudy = localStorage.getItem('lastStudyDate');
+            
+            if (lastStudy !== today) {
+                let streak = parseInt(localStorage.getItem('studyStreak') || '0');
+                const yesterday = new Date();
+                yesterday.setDate(yesterday.getDate() - 1);
+                
+                if (lastStudy === yesterday.toDateString()) {
+                    streak++;
+                } else {
+                    streak = 1;
+                }
+                
+                localStorage.setItem('studyStreak', streak.toString());
+                localStorage.setItem('lastStudyDate', today);
+                updateStreak();
+            }
+        }
+
+        // Render decks
+        function renderDecks() {
+            const grid = document.getElementById('deckGrid');
+            grid.innerHTML = '<div class="deck-card add-deck" onclick="showCreateDeck()">+</div>';
+            
+            decks.forEach(deck => {
+                const card = document.createElement('div');
+                card.className = 'deck-card';
+                card.onclick = () => startStudying(deck.id);
+                card.innerHTML = `
+                    <div>
+                        <div class="deck-title">${deck.name}</div>
+                        <div class="deck-count">${deck.cards.length} cards</div>
+                    </div>
+                `;
+                grid.appendChild(card);
+            });
+        }
+
+        // Show view
+        function showView(view) {
+            document.querySelectorAll('.content > div').forEach(el => el.classList.add('hidden'));
+            document.querySelectorAll('.nav-btn').forEach(btn => btn.classList.remove('active'));
+            
+            if (view === 'home') {
+                document.getElementById('homeView').classList.remove('hidden');
+                document.querySelectorAll('.nav-btn')[0].classList.add('active');
+            } else if (view === 'study') {
+                if (currentDeck) {
+                    document.getElementById('studyView').classList.remove('hidden');
+                    document.querySelectorAll('.nav-btn')[2].classList.add('active');
+                } else {
+                    alert('Select a deck to study first!');
+                    showView('home');
+                }
+            } else if (view === 'edit') {
+                document.getElementById('editView').classList.remove('hidden');
+                document.querySelectorAll('.nav-btn')[1].classList.add('active');
+            }
+        }
+
+        // Show create deck
+        function showCreateDeck() {
+            editingDeckId = null;
+            tempCards = [];
+            document.getElementById('deckName').value = '';
+            document.getElementById('cardFront').value = '';
+            document.getElementById('cardBack').value = '';
+            document.getElementById('frontImagePreview').classList.add('hidden');
+            document.getElementById('backImagePreview').classList.add('hidden');
+            document.getElementById('cardList').innerHTML = '';
+            tempFrontImage = null;
+            tempBackImage = null;
+            showView('edit');
+        }
+
+        // Add card
+        function addCard() {
+            const front = document.getElementById('cardFront').value.trim();
+            const back = document.getElementById('cardBack').value.trim();
+            
+            if (!front || !back) {
+                alert('Please fill in both sides of the card');
+                return;
+            }
+            
+            tempCards.push({
+                front,
+                back,
+                frontImage: tempFrontImage,
+                backImage: tempBackImage
+            });
+            
+            renderTempCards();
+            
+            document.getElementById('cardFront').value = '';
+            document.getElementById('cardBack').value = '';
+            document.getElementById('frontImagePreview').classList.add('hidden');
+            document.getElementById('backImagePreview').classList.add('hidden');
+            tempFrontImage = null;
+            tempBackImage = null;
+        }
+
+        // Render temp cards
+        function renderTempCards() {
+            const list = document.getElementById('cardList');
+            list.innerHTML = '<h3 style="margin-bottom: 16px;">Cards in this deck</h3>';
+            
+            tempCards.forEach((card, index) => {
+                const item = document.createElement('div');
+                item.className = 'card-item';
+                item.innerHTML = `
+                    <div class="card-item-text">
+                        ${card.front} → ${card.back}
+                    </div>
+                    <button class="delete-btn" onclick="deleteCard(${index})">Delete</button>
+                `;
+                list.appendChild(item);
+            });
+        }
+
+        // Delete card
+        function deleteCard(index) {
+            tempCards.splice(index, 1);
+            renderTempCards();
+        }
+
+        // Save deck
+        function saveDeck() {
+            const name = document.getElementById('deckName').value.trim();
+            
+            if (!name) {
+                alert('Please enter a deck name');
+                return;
+            }
+            
+            if (tempCards.length === 0) {
+                alert('Please add at least one card');
+                return;
+            }
+            
+            const deck = {
+                id: editingDeckId || Date.now(),
+                name,
+                cards: tempCards
+            };
+            
+            if (editingDeckId) {
+                const index = decks.findIndex(d => d.id === editingDeckId);
+                decks[index] = deck;
+            } else {
+                decks.push(deck);
+            }
+            
+            saveData();
+            renderDecks();
+            showView('home');
+        }
+
+        // Start studying
+        function startStudying(deckId) {
+            const deck = decks.find(d => d.id === deckId);
+            if (!deck || deck.cards.length === 0) return;
+            
+            currentDeck = deck;
+            currentCardIndex = 0;
+            incrementStreak();
+            showCard();
+            showView('study');
+        }
+
+        // Show card
+        function showCard() {
+            if (!currentDeck) return;
+            
+            const card = currentDeck.cards[currentCardIndex];
+            document.getElementById('currentCard').textContent = currentCardIndex + 1;
+            document.getElementById('totalCards').textContent = currentDeck.cards.length;
+            
+            document.getElementById('frontText').textContent = card.front;
+            document.getElementById('backText').textContent = card.back;
+            
+            const frontImg = document.getElementById('frontImage');
+            const backImg = document.getElementById('backImage');
+            
+            if (card.frontImage) {
+                frontImg.src = card.frontImage;
+                frontImg.classList.remove('hidden');
+            } else {
+                frontImg.classList.add('hidden');
+            }
+            
+            if (card.backImage) {
+                backImg.src = card.backImage;
+                backImg.classList.remove('hidden');
+            } else {
+                backImg.classList.add('hidden');
+            }
+            
+            document.getElementById('flashcard').classList.remove('flipped');
+        }
+
+        // Flip card
+        function flipCard() {
+            document.getElementById('flashcard').classList.toggle('flipped');
+        }
+
+        // Next/Prev card
+        function nextCard() {
+            if (!currentDeck) return;
+            currentCardIndex = (currentCardIndex + 1) % currentDeck.cards.length;
+            showCard();
+        }
+
+        function prevCard() {
+            if (!currentDeck) return;
+            currentCardIndex = (currentCardIndex - 1 + currentDeck.cards.length) % currentDeck.cards.length;
+            showCard();
+        }
+
+        // Camera functions
+        function openCamera(target) {
+            currentPhotoTarget = target;
+            const modal = document.getElementById('cameraModal');
+            const video = document.getElementById('cameraVideo');
+            
+            modal.classList.remove('hidden');
+            
+            navigator.mediaDevices.getUserMedia({ 
+                video: { facingMode: 'environment' },
+                audio: false 
+            })
+            .then(stream => {
+                cameraStream = stream;
+                video.srcObject = stream;
+            })
+            .catch(err => {
+                alert('Could not access camera: ' + err.message);
+                closeCamera();
+            });
+        }
+
+        function closeCamera() {
+            if (cameraStream) {
+                cameraStream.getTracks().forEach(track => track.stop());
+                cameraStream = null;
+            }
+            document.getElementById('cameraModal').classList.add('hidden');
+        }
+
+        function capturePhoto() {
+            const video = document.getElementById('cameraVideo');
+            const canvas = document.getElementById('cameraCanvas');
+            const context = canvas.getContext('2d');
+            
+            canvas.width = video.videoWidth;
+            canvas.height = video.videoHeight;
+            context.drawImage(video, 0, 0);
+            
+            const imageData = canvas.toDataURL('image/jpeg', 0.8);
+            
+            if (currentPhotoTarget === 'front') {
+                tempFrontImage = imageData;
+                document.getElementById('frontImagePreview').src = imageData;
+                document.getElementById('frontImagePreview').classList.remove('hidden');
+            } else {
+                tempBackImage = imageData;
+                document.getElementById('backImagePreview').src = imageData;
+                document.getElementById('backImagePreview').classList.remove('hidden');
+            }
+            
+            closeCamera();
+        }
+
+        // Touch gestures for swiping
+        const flashcard = document.getElementById('flashcard');
+        
+        flashcard.addEventListener('touchstart', e => {
+            touchStartX = e.changedTouches[0].screenX;
+        });
+        
+        flashcard.addEventListener('touchend', e => {
+            touchEndX = e.changedTouches[0].screenX;
+            handleSwipe();
+        });
+        
+        function handleSwipe() {
+            const diff = touchStartX - touchEndX;
+            if (Math.abs(diff) > 50) {
+                if (diff > 0) {
+                    nextCard();
+                } else {
+                    prevCard();
+                }
+            }
+        }
+
+        // Initialize
+        loadData();
+    </script>
+</body
