@@ -508,7 +508,8 @@
                     <div class="form-group">
                         <label>Front (Question)</label>
                         <textarea id="cardFront" placeholder="What's the question?"></textarea>
-                        <button class="camera-btn" onclick="openCamera('front')">
+                        <input type="file" id="frontFileInput" accept="image/*" capture="environment" style="display:none;" onchange="handleFileSelect('front')">
+                        <button class="camera-btn" onclick="document.getElementById('frontFileInput').click()">
                             📸 Add Photo
                         </button>
                         <img id="frontImagePreview" class="image-preview hidden" src="">
@@ -517,7 +518,8 @@
                     <div class="form-group">
                         <label>Back (Answer)</label>
                         <textarea id="cardBack" placeholder="What's the answer?"></textarea>
-                        <button class="camera-btn" onclick="openCamera('back')">
+                        <input type="file" id="backFileInput" accept="image/*" capture="environment" style="display:none;" onchange="handleFileSelect('back')">
+                        <button class="camera-btn" onclick="document.getElementById('backFileInput').click()">
                             📸 Add Photo
                         </button>
                         <img id="backImagePreview" class="image-preview hidden" src="">
@@ -829,6 +831,29 @@
         }
 
         // Camera functions
+        function handleFileSelect(target) {
+            const fileInput = target === 'front' ? document.getElementById('frontFileInput') : document.getElementById('backFileInput');
+            const file = fileInput.files[0];
+            
+            if (file && file.type.startsWith('image/')) {
+                const reader = new FileReader();
+                reader.onload = function(e) {
+                    const imageData = e.target.result;
+                    
+                    if (target === 'front') {
+                        tempFrontImage = imageData;
+                        document.getElementById('frontImagePreview').src = imageData;
+                        document.getElementById('frontImagePreview').classList.remove('hidden');
+                    } else {
+                        tempBackImage = imageData;
+                        document.getElementById('backImagePreview').src = imageData;
+                        document.getElementById('backImagePreview').classList.remove('hidden');
+                    }
+                };
+                reader.readAsDataURL(file);
+            }
+        }
+
         function openCamera(target) {
             currentPhotoTarget = target;
             const modal = document.getElementById('cameraModal');
@@ -891,9 +916,17 @@
             const canvas = document.getElementById('cameraCanvas');
             const context = canvas.getContext('2d');
             
-            canvas.width = video.videoWidth;
-            canvas.height = video.videoHeight;
-            context.drawImage(video, 0, 0);
+            // Check if video is ready
+            if (video.readyState < 2) {
+                alert('Camera is still loading, please wait...');
+                return;
+            }
+            
+            canvas.width = video.videoWidth || 640;
+            canvas.height = video.videoHeight || 480;
+            
+            // Draw the video frame to canvas
+            context.drawImage(video, 0, 0, canvas.width, canvas.height);
             
             const imageData = canvas.toDataURL('image/jpeg', 0.8);
             
