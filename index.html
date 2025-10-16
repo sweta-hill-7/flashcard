@@ -42,20 +42,29 @@
         }
 
         .logo {
-            font-size: 24px;
-            font-weight: 800;
+            font-size: 28px;
+            font-weight: 900;
             background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
             -webkit-background-clip: text;
             -webkit-text-fill-color: transparent;
             background-clip: text;
+            letter-spacing: -0.5px;
         }
 
         .streak {
             display: flex;
             align-items: center;
-            gap: 6px;
-            font-size: 16px;
-            font-weight: 600;
+            gap: 8px;
+            font-size: 18px;
+            font-weight: 700;
+            padding: 8px 16px;
+            background: linear-gradient(135deg, #ff6b6b 0%, #ff8e53 100%);
+            border-radius: 20px;
+        }
+
+        .streak::before {
+            content: '🔥';
+            font-size: 20px;
         }
 
         /* Main Content */
@@ -77,16 +86,17 @@
 
         .deck-card {
             background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
-            border-radius: 20px;
-            padding: 20px;
+            border-radius: 24px;
+            padding: 24px;
             aspect-ratio: 1;
             display: flex;
             flex-direction: column;
             justify-content: space-between;
             cursor: pointer;
-            transition: transform 0.2s;
+            transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
             position: relative;
             overflow: hidden;
+            box-shadow: 0 8px 32px rgba(102, 126, 234, 0.3);
         }
 
         .deck-card:active {
@@ -100,13 +110,24 @@
             left: 0;
             right: 0;
             bottom: 0;
-            background: rgba(255, 255, 255, 0.1);
+            background: rgba(255, 255, 255, 0.15);
             opacity: 0;
-            transition: opacity 0.2s;
+            transition: opacity 0.3s;
         }
 
         .deck-card:active::before {
             opacity: 1;
+        }
+
+        .deck-card::after {
+            content: '';
+            position: absolute;
+            top: -50%;
+            right: -50%;
+            width: 200%;
+            height: 200%;
+            background: radial-gradient(circle, rgba(255,255,255,0.1) 0%, transparent 70%);
+            pointer-events: none;
         }
 
         .deck-title {
@@ -121,13 +142,30 @@
         }
 
         .add-deck {
-            background: rgba(255, 255, 255, 0.1);
-            border: 2px dashed rgba(255, 255, 255, 0.3);
+            background: rgba(255, 255, 255, 0.05);
+            border: 3px dashed rgba(255, 255, 255, 0.3);
             display: flex;
+            flex-direction: column;
             align-items: center;
             justify-content: center;
+            gap: 8px;
+            font-size: 14px;
+            font-weight: 600;
+            color: rgba(255, 255, 255, 0.7);
+        }
+
+        .add-deck::before {
+            content: '+';
             font-size: 48px;
-            color: rgba(255, 255, 255, 0.6);
+            font-weight: 300;
+            line-height: 1;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+        }
+
+        .add-deck::after {
+            content: 'New Deck';
         }
 
         /* Study View */
@@ -218,13 +256,14 @@
 
         .study-btn {
             flex: 1;
-            padding: 16px;
+            padding: 18px;
             border: none;
-            border-radius: 16px;
-            font-size: 16px;
-            font-weight: 600;
+            border-radius: 20px;
+            font-size: 17px;
+            font-weight: 700;
             cursor: pointer;
-            transition: transform 0.2s;
+            transition: all 0.3s;
+            box-shadow: 0 4px 16px rgba(0, 0, 0, 0.2);
         }
 
         .study-btn:active {
@@ -232,13 +271,15 @@
         }
 
         .btn-prev {
-            background: rgba(255, 255, 255, 0.1);
+            background: rgba(255, 255, 255, 0.15);
             color: white;
+            backdrop-filter: blur(10px);
         }
 
         .btn-next {
-            background: white;
+            background: linear-gradient(135deg, #fff 0%, #f8f9fa 100%);
             color: #1a1a2e;
+            box-shadow: 0 8px 24px rgba(255, 255, 255, 0.3);
         }
 
         /* Create/Edit View */
@@ -281,19 +322,31 @@
 
         .camera-btn {
             width: 100%;
-            padding: 16px;
+            padding: 18px;
             background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
             border: none;
-            border-radius: 12px;
+            border-radius: 16px;
             color: white;
             font-size: 16px;
-            font-weight: 600;
+            font-weight: 700;
             cursor: pointer;
             display: flex;
             align-items: center;
             justify-content: center;
-            gap: 8px;
-            margin-top: 8px;
+            gap: 10px;
+            margin-top: 12px;
+            box-shadow: 0 8px 24px rgba(102, 126, 234, 0.3);
+            transition: all 0.3s;
+        }
+
+        .camera-btn:active {
+            transform: scale(0.97);
+            box-shadow: 0 4px 12px rgba(102, 126, 234, 0.4);
+        }
+
+        .camera-btn::before {
+            content: '📸';
+            font-size: 20px;
         }
 
         .image-preview {
@@ -340,101 +393,89 @@
             left: 0;
             right: 0;
             background: rgba(26, 26, 46, 0.95);
-            backdrop-filter: blur(10px);
+            backdrop-filter: blur(20px);
             border-top: 1px solid rgba(255, 255, 255, 0.1);
             display: flex;
-            padding: 12px 20px 24px;
+            padding: 8px 20px 28px;
             justify-content: space-around;
+            box-shadow: 0 -10px 40px rgba(0, 0, 0, 0.3);
         }
 
         .nav-btn {
             background: none;
             border: none;
-            color: rgba(255, 255, 255, 0.6);
-            font-size: 24px;
-            padding: 8px 20px;
+            color: rgba(255, 255, 255, 0.5);
+            font-size: 14px;
+            padding: 12px 24px;
             cursor: pointer;
-            transition: all 0.2s;
+            transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
             display: flex;
             flex-direction: column;
             align-items: center;
-            gap: 4px;
+            gap: 6px;
+            border-radius: 16px;
+            position: relative;
+        }
+
+        .nav-btn::before {
+            font-size: 24px;
+            transition: transform 0.3s;
+        }
+
+        .nav-btn:active::before {
+            transform: scale(0.9);
         }
 
         .nav-btn.active {
-            color: #667eea;
+            color: white;
+            background: rgba(102, 126, 234, 0.2);
+        }
+
+        .nav-btn.active::before {
+            transform: scale(1.1);
+        }
+
+        .nav-btn:nth-child(1)::before {
+            content: '🏠';
+        }
+
+        .nav-btn:nth-child(2)::before {
+            content: '✨';
+        }
+
+        .nav-btn:nth-child(3)::before {
+            content: '📚';
         }
 
         .nav-label {
             font-size: 11px;
-            font-weight: 600;
+            font-weight: 700;
+            letter-spacing: 0.5px;
+            text-transform: uppercase;
         }
 
         .btn-primary {
             width: 100%;
-            padding: 16px;
+            padding: 18px;
             background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
             border: none;
-            border-radius: 12px;
+            border-radius: 16px;
             color: white;
-            font-size: 16px;
-            font-weight: 600;
+            font-size: 17px;
+            font-weight: 700;
             cursor: pointer;
-            margin-top: 20px;
+            margin-top: 24px;
+            box-shadow: 0 8px 24px rgba(102, 126, 234, 0.3);
+            transition: all 0.3s;
+            text-transform: uppercase;
+            letter-spacing: 1px;
+        }
+
+        .btn-primary:active {
+            transform: scale(0.97);
         }
 
         .hidden {
-            display: none;
-        }
-
-        /* Camera Modal */
-        .camera-modal {
-            position: fixed;
-            top: 0;
-            left: 0;
-            right: 0;
-            bottom: 0;
-            background: black;
-            z-index: 1000;
-            display: flex;
-            flex-direction: column;
-        }
-
-        #cameraVideo {
-            flex: 1;
-            width: 100%;
-            height: 100%;
-            object-fit: cover;
-            background: black;
-        }
-
-        .camera-controls {
-            padding: 20px;
-            display: flex;
-            justify-content: space-around;
-            align-items: center;
-        }
-
-        .capture-btn {
-            width: 70px;
-            height: 70px;
-            border-radius: 50%;
-            border: 4px solid white;
-            background: rgba(255, 255, 255, 0.3);
-            cursor: pointer;
-        }
-
-        .close-camera {
-            background: rgba(255, 255, 255, 0.2);
-            border: none;
-            color: white;
-            padding: 12px 24px;
-            border-radius: 20px;
-            font-size: 16px;
-            cursor: pointer;
-        }
-
-        #cameraCanvas {
             display: none;
         }
 
@@ -457,8 +498,10 @@
 <body>
     <div id="app">
         <div class="header">
-            <div class="logo">Flipster</div>
-            <div class="streak">🔥 <span id="streakCount">0</span></div>
+            <div class="logo">flipster</div>
+            <div class="streak">
+                <span id="streakCount">0</span>
+            </div>
         </div>
 
         <div class="content">
@@ -510,7 +553,7 @@
                         <textarea id="cardFront" placeholder="What's the question?"></textarea>
                         <input type="file" id="frontFileInput" accept="image/*" capture="environment" style="display:none;" onchange="handleFileSelect('front')">
                         <button class="camera-btn" onclick="document.getElementById('frontFileInput').click()">
-                            📸 Add Photo
+                            Add Photo
                         </button>
                         <img id="frontImagePreview" class="image-preview hidden" src="">
                     </div>
@@ -520,7 +563,7 @@
                         <textarea id="cardBack" placeholder="What's the answer?"></textarea>
                         <input type="file" id="backFileInput" accept="image/*" capture="environment" style="display:none;" onchange="handleFileSelect('back')">
                         <button class="camera-btn" onclick="document.getElementById('backFileInput').click()">
-                            📸 Add Photo
+                            Add Photo
                         </button>
                         <img id="backImagePreview" class="image-preview hidden" src="">
                     </div>
@@ -536,30 +579,18 @@
 
         <div class="bottom-nav">
             <button class="nav-btn active" onclick="showView('home')">
-                <span>🏠</span>
                 <span class="nav-label">Home</span>
             </button>
             <button class="nav-btn" onclick="showCreateDeck()">
-                <span>➕</span>
                 <span class="nav-label">Create</span>
             </button>
             <button class="nav-btn" onclick="showView('study')">
-                <span>📚</span>
                 <span class="nav-label">Study</span>
             </button>
         </div>
     </div>
 
-    <!-- Camera Modal -->
-    <div id="cameraModal" class="camera-modal hidden">
-        <video id="cameraVideo" autoplay playsinline></video>
-        <canvas id="cameraCanvas"></canvas>
-        <div class="camera-controls">
-            <button class="close-camera" onclick="closeCamera()">Cancel</button>
-            <button class="capture-btn" onclick="capturePhoto()"></button>
-            <div style="width: 80px;"></div>
-        </div>
-    </div>
+
 
     <script>
         let decks = [];
@@ -567,8 +598,6 @@
         let currentCardIndex = 0;
         let editingDeckId = null;
         let tempCards = [];
-        let cameraStream = null;
-        let currentPhotoTarget = null;
         let tempFrontImage = null;
         let tempBackImage = null;
         let touchStartX = 0;
@@ -830,7 +859,7 @@
             showCard();
         }
 
-        // Camera functions
+        // Camera functions - Simple file input approach
         function handleFileSelect(target) {
             const fileInput = target === 'front' ? document.getElementById('frontFileInput') : document.getElementById('backFileInput');
             const file = fileInput.files[0];
@@ -852,95 +881,6 @@
                 };
                 reader.readAsDataURL(file);
             }
-        }
-
-        function openCamera(target) {
-            currentPhotoTarget = target;
-            const modal = document.getElementById('cameraModal');
-            const video = document.getElementById('cameraVideo');
-            
-            modal.classList.remove('hidden');
-            
-            // Try different camera constraints
-            const constraints = {
-                video: { 
-                    facingMode: 'environment',
-                    width: { ideal: 1920 },
-                    height: { ideal: 1080 }
-                },
-                audio: false 
-            };
-            
-            navigator.mediaDevices.getUserMedia(constraints)
-            .then(stream => {
-                cameraStream = stream;
-                video.srcObject = stream;
-                
-                // Ensure video plays
-                video.onloadedmetadata = () => {
-                    video.play().catch(err => {
-                        console.error('Error playing video:', err);
-                    });
-                };
-            })
-            .catch(err => {
-                // If back camera fails, try front camera
-                navigator.mediaDevices.getUserMedia({ 
-                    video: { facingMode: 'user' },
-                    audio: false 
-                })
-                .then(stream => {
-                    cameraStream = stream;
-                    video.srcObject = stream;
-                    video.onloadedmetadata = () => {
-                        video.play();
-                    };
-                })
-                .catch(err2 => {
-                    alert('Could not access camera. Please check permissions in your browser settings.');
-                    closeCamera();
-                });
-            });
-        }
-
-        function closeCamera() {
-            if (cameraStream) {
-                cameraStream.getTracks().forEach(track => track.stop());
-                cameraStream = null;
-            }
-            document.getElementById('cameraModal').classList.add('hidden');
-        }
-
-        function capturePhoto() {
-            const video = document.getElementById('cameraVideo');
-            const canvas = document.getElementById('cameraCanvas');
-            const context = canvas.getContext('2d');
-            
-            // Check if video is ready
-            if (video.readyState < 2) {
-                alert('Camera is still loading, please wait...');
-                return;
-            }
-            
-            canvas.width = video.videoWidth || 640;
-            canvas.height = video.videoHeight || 480;
-            
-            // Draw the video frame to canvas
-            context.drawImage(video, 0, 0, canvas.width, canvas.height);
-            
-            const imageData = canvas.toDataURL('image/jpeg', 0.8);
-            
-            if (currentPhotoTarget === 'front') {
-                tempFrontImage = imageData;
-                document.getElementById('frontImagePreview').src = imageData;
-                document.getElementById('frontImagePreview').classList.remove('hidden');
-            } else {
-                tempBackImage = imageData;
-                document.getElementById('backImagePreview').src = imageData;
-                document.getElementById('backImagePreview').classList.remove('hidden');
-            }
-            
-            closeCamera();
         }
 
         // Touch gestures for swiping
